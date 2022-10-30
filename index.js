@@ -1,52 +1,46 @@
 const buttonColours = ["red", "blue", "green", "yellow"];
-let gamePattern = ["yellow","green","blue"];
+let gamePattern = [];
+let userclicked_Pattern = [];
 let random_Num;
 let randomChosenColour;
 let buttonID;
 let gameLevel;
-let pattern_correct = false;
-// function Next_Sequence() {
-//   for (i = 0; i <= gameLevel; i++) {
-//     random_Num = Math.floor(Math.random() * 4);
-//
-//     randomChosenColour = buttonColours[random_Num];
-//
-//     gamePattern.push(randomChosenColour);
-//
-//     $("#" + gamePattern[i]).click();
-//     //alert("The current pattern is "+ gamePattern);
-//   }
-// }
-async function test_seq()
+
+
+function Next_Sequence()
 {
-  for (i = 0; i < 3; i++) {
+        random_Num = Math.floor(Math.random() * 4);
 
-      $("." + gamePattern[i]).addClass("pressed");
-      new Audio('sounds/'+gamePattern[i]+'.mp3').play();
-      await setTimeout(()=>{$("." + gamePattern[i]).removeClass("pressed");},1000);
+        randomChosenColour = buttonColours[random_Num];
 
-      //$("#" + gamePattern[i]).click();
-    }
+        gamePattern.push(randomChosenColour);
+
+        currentlevel_Pattern = randomChosenColour;
+
+        $("#"+currentlevel_Pattern).fadeOut(100).fadeIn(100);
+        new Audio('sounds/'+currentlevel_Pattern+'.mp3').play();
 }
 
 function check_pattern()
 {
-  $(".btn").click(function() {
+    let pattern_correct = true;
+    $(".btn").click(function() {
     buttonID = this.id;
-    //alert("The click button is colour " + buttonID);
-    //for (let i in gamePattern)
 
-    if (buttonID == gamePattern[0])
+    userclicked_Pattern.push(buttonID);
+
+
+    for (let i = 0; i<gamePattern.length; i++)
     {
-    pattern_correct = true;
-    //gamePattern.shift();
-    }
-    else
-    {
-    pattern_correct = false;
+      if (userclicked_Pattern[i] != gamePattern[i])
+      {
+        pattern_correct = false;
+      }
     }
 
   });
+
+  return pattern_correct;
 }
 
 
@@ -84,65 +78,32 @@ $(".btn").click(function() {
 
 $(document).keypress(function(event) {
   var input_key = event.key;
-  gameLevel = 0;
+  gameLevel = 1;
   if (input_key.toLowerCase() == "a") {
     $("h1").html("Level " + gameLevel);
-    //Next_Sequence();
-    test_seq();
-    alert("The curent checking pattern is " + gamePattern[0]);
 
-    while (gamePattern.length != 0)
+    while(gameLevel != 0)
     {
-      check_pattern();
-      if (pattern_correct)
+      Next_Sequence();
+      //let result = check_pattern();
+      let result;
+      
+      if(result)
       {
-        gamePattern.shift();
+        gameLevel ++;
+        $("h1").html("Level " + gameLevel);
       }
-      alert("The curent checking pattern is " + gamePattern[0]);
+      else
+      {
+          $("h1").html("Game Over...");
+          new Audio('sounds/wrong.mp3').play();
+
+          gamePattern = [];
+          userclicked_Pattern = [];
+          gameLevel = 0;
+      }
     }
 
-
-    if(gamePattern.length === 0)
-    {
-      gameLevel +=1;
-      $("h1").html("Level " + gameLevel);
-      //Next_Sequence();
-    }
-   else {
-    $("h1").html("Game Over...");
-    new Audio('sounds/wrong.mp3').play();
-
-    gamePattern = [];
-    gameLevel = 0;
-  }
-
-    // $(".btn").click(function() {
-    //   buttonID = this.id;
-    //   alert("The click button is colour " + buttonID);
-    //   //for (let i in gamePattern)
-    //   for (i = 0; i < 3; i++)
-    //   {
-    //
-    //   if (buttonID == gamePattern[0]) {
-    //     gamePattern.shift();
-    //     if(gamePattern.length === 0)
-    //     {
-    //       gameLevel +=1;
-    //       $("h1").html("Level " + gameLevel);
-    //       //Next_Sequence();
-    //     }
-    //   } else {
-    //     $("h1").html("Game Over...");
-    //     new Audio('sounds/wrong.mp3').play();
-    //
-    //     gamePattern = [];
-    //     gameLevel = 0;
-    //   }
-    //
-    //   }
-    //
-    //
-    // });
   }
 
 });
