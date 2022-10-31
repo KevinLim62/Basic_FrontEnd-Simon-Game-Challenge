@@ -5,7 +5,7 @@ let random_Num;
 let randomChosenColour;
 let buttonID;
 let gameLevel;
-
+let userbutton;
 
 function Next_Sequence()
 {
@@ -17,28 +17,28 @@ function Next_Sequence()
 
         currentlevel_Pattern = randomChosenColour;
 
-        $("#"+currentlevel_Pattern).fadeOut(100).fadeIn(100);
+        $("#"+currentlevel_Pattern).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
         new Audio('sounds/'+currentlevel_Pattern+'.mp3').play();
 }
 
 function check_pattern()
 {
     let pattern_correct = true;
+
     $(".btn").click(function() {
-    buttonID = this.id;
+      userbutton = this.id;
+      userclicked_Pattern.push(buttonID);
 
-    userclicked_Pattern.push(buttonID);
 
-
-    for (let i = 0; i<gamePattern.length; i++)
-    {
-      if (userclicked_Pattern[i] != gamePattern[i])
+      for (let i = 0; i<gamePattern.length; i++)
       {
-        pattern_correct = false;
+        if (userclicked_Pattern[i] != gamePattern[i])
+        {
+          pattern_correct = false;
+        }
       }
-    }
+    });
 
-  });
 
   return pattern_correct;
 }
@@ -81,28 +81,65 @@ $(document).keypress(function(event) {
   gameLevel = 1;
   if (input_key.toLowerCase() == "a") {
     $("h1").html("Level " + gameLevel);
+    let result;
 
-    while(gameLevel != 0)
-    {
-      Next_Sequence();
-      //let result = check_pattern();
-      let result;
-      
-      if(result)
-      {
-        gameLevel ++;
-        $("h1").html("Level " + gameLevel);
-      }
-      else
-      {
-          $("h1").html("Game Over...");
-          new Audio('sounds/wrong.mp3').play();
+    Next_Sequence();
 
-          gamePattern = [];
-          userclicked_Pattern = [];
-          gameLevel = 0;
+    let pattern_correct = true;
+
+    $(".btn").click(function() {
+      userbutton = this.id;
+
+      if(userclicked_Pattern.push(buttonID) && userclicked_Pattern.length == gamePattern.length)
+      {
+        for (let i = 0; i<userclicked_Pattern.length; i++)
+        {
+          if (userclicked_Pattern[i] != gamePattern[i])
+          {
+            pattern_correct = false;
+          }
+        }
+
+        if(pattern_correct)
+        {
+            gameLevel ++;
+            $("h1").html("Level " + gameLevel);
+            userclicked_Pattern = [];
+
+            setTimeout(function() {
+
+            Next_Sequence();
+
+          }, 300);
+
+        }
+        else
+        {
+            $("h1").html("Game Over...");
+            new Audio('sounds/wrong.mp3').play();
+            gamePattern = [];
+            userclicked_Pattern = [];
+            gameLevel = 0;
+            //$("hidden").css("visibility","visible");
+        }
       }
-    }
+    });
+
+
+    //let result;
+    // if(result)
+    // {
+    //   gameLevel ++;
+    //   $("h1").html("Level " + gameLevel);
+    // }
+    // else
+    // {
+    //     $("h1").html("Game Over...");
+    //     new Audio('sounds/wrong.mp3').play();
+    //     //gamePattern = [];
+    //     //userclicked_Pattern = [];
+    //     //gameLevel = 0;
+    // }
 
   }
 

@@ -10,11 +10,22 @@ body {
   color: #FEF2BF;
 }
 
+#small{
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.5rem;
+  margin:  auto;
+  color: #FEF2BF;
+}
+
 .container {
   display: block;
   width: 50%;
   margin: auto;
 
+}
+
+.hidden{
+  visibility: hidden;
 }
 
 .btn {
