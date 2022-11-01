@@ -5,7 +5,8 @@ let random_Num;
 let randomChosenColour;
 let buttonID;
 let gameLevel;
-let userbutton;
+let restart;
+let pattern_correct;
 
 function Next_Sequence()
 {
@@ -21,26 +22,24 @@ function Next_Sequence()
         new Audio('sounds/'+currentlevel_Pattern+'.mp3').play();
 }
 
-function check_pattern()
+async function Game_reset()
 {
-    let pattern_correct = true;
 
-    $(".btn").click(function() {
-      userbutton = this.id;
-      userclicked_Pattern.push(buttonID);
+  let myPromise = new Promise(function(resolve, reject) {
+
+    $(document).keypress(function(event){
+      $(".hidden").css("visibility","hidden");
+      $("h1").html("Level " + gameLevel);
+      //pattern_correct = true;
+      //Next_Sequence();
+      resolve(true);
 
 
-      for (let i = 0; i<gamePattern.length; i++)
-      {
-        if (userclicked_Pattern[i] != gamePattern[i])
-        {
-          pattern_correct = false;
-        }
-      }
     });
 
+  });
 
-  return pattern_correct;
+  return await myPromise;
 }
 
 
@@ -77,26 +76,26 @@ $(".btn").click(function() {
 });
 
 $(document).keypress(function(event) {
-  var input_key = event.key;
+  let input_key = event.key;
   gameLevel = 1;
-  if (input_key.toLowerCase() == "a") {
+  if (input_key.toLowerCase() == "a" || restart == true) {
     $("h1").html("Level " + gameLevel);
+    restart = false;
     let result;
-
     Next_Sequence();
 
-    let pattern_correct = true;
-
+    pattern_correct = true;
     $(".btn").click(function() {
       userbutton = this.id;
 
       if(userclicked_Pattern.push(buttonID) && userclicked_Pattern.length == gamePattern.length)
       {
-        for (let i = 0; i<userclicked_Pattern.length; i++)
+        for (let i in userclicked_Pattern)
         {
           if (userclicked_Pattern[i] != gamePattern[i])
           {
             pattern_correct = false;
+            break;
           }
         }
 
@@ -110,7 +109,7 @@ $(document).keypress(function(event) {
 
             Next_Sequence();
 
-          }, 300);
+          }, 500);
 
         }
         else
@@ -119,27 +118,13 @@ $(document).keypress(function(event) {
             new Audio('sounds/wrong.mp3').play();
             gamePattern = [];
             userclicked_Pattern = [];
-            gameLevel = 0;
-            //$("hidden").css("visibility","visible");
+            gameLevel = 1;
+            $(".hidden").css("visibility","visible");
+            restart = Game_reset();
+
         }
       }
     });
-
-
-    //let result;
-    // if(result)
-    // {
-    //   gameLevel ++;
-    //   $("h1").html("Level " + gameLevel);
-    // }
-    // else
-    // {
-    //     $("h1").html("Game Over...");
-    //     new Audio('sounds/wrong.mp3').play();
-    //     //gamePattern = [];
-    //     //userclicked_Pattern = [];
-    //     //gameLevel = 0;
-    // }
 
   }
 
