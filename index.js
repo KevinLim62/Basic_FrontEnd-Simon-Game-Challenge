@@ -1,50 +1,42 @@
 const buttonColours = ["red", "blue", "green", "yellow"];
 let gamePattern = [];
 let userclicked_Pattern = [];
-let random_Num;
-let randomChosenColour;
-let buttonID;
 let gameLevel;
-let restart;
-let pattern_correct;
+let restart = false;
+let first_scan = true;
+let pattern_correct = 0;
 
 function Next_Sequence()
 {
-        random_Num = Math.floor(Math.random() * 4);
 
-        randomChosenColour = buttonColours[random_Num];
+          let random_Num = Math.floor(Math.random() * 4);
 
-        gamePattern.push(randomChosenColour);
+          let randomChosenColour = buttonColours[random_Num];
 
-        currentlevel_Pattern = randomChosenColour;
+          gamePattern.push(randomChosenColour);
 
-        $("#"+currentlevel_Pattern).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
-        new Audio('sounds/'+currentlevel_Pattern+'.mp3').play();
+          currentlevel_Pattern = randomChosenColour;
+
+          $("#"+currentlevel_Pattern).fadeOut(100).fadeIn(100).fadeOut(100).fadeIn(100);
+          new Audio('sounds/'+currentlevel_Pattern+'.mp3').play();
 }
 
-async function Game_reset()
+function Game_Reset()
 {
+    restart = true;
 
-  let myPromise = new Promise(function(resolve, reject) {
-
-    $(document).keypress(function(event){
-      $(".hidden").css("visibility","hidden");
-      $("h1").html("Level " + gameLevel);
-      //pattern_correct = true;
-      //Next_Sequence();
-      resolve(true);
-
-
-    });
-
-  });
-
-  return await myPromise;
+      $(document).keypress(function(event){
+        $(".hidden").css("visibility","hidden");
+      });
 }
 
-
+//Event listener
+//checking on which buttons that user clicks
+//Determine the sequence pattern with userclicked pattern
 $(".btn").click(function() {
-  buttonID = this.id;
+  let buttonID = this.id;
+  pattern_correct = 0;
+
   $("." + buttonID).addClass("pressed");
   switch (buttonID) {
     case "blue":
@@ -64,7 +56,6 @@ $(".btn").click(function() {
       break;
 
     default:
-      console.log(buttonID);
   }
 
   setTimeout(function() {
@@ -73,59 +64,72 @@ $(".btn").click(function() {
 
   }, 100);
 
+
+  if(userclicked_Pattern.push(buttonID) && userclicked_Pattern.length == gamePattern.length)
+  {
+    for (let i in userclicked_Pattern)
+    {
+      if (userclicked_Pattern[i] != gamePattern[i])
+      {
+        pattern_correct = 2;
+        break;
+      }
+      else
+      {
+        pattern_correct = 1;
+      }
+    }
+
+    switch(pattern_correct)
+    {
+        case 1:
+                  gameLevel ++;
+                  $("h1").html("Level " + gameLevel);
+                  userclicked_Pattern = [];
+
+                  setTimeout(function() {
+                    Next_Sequence();
+                  }, 500);
+
+                  break;
+
+        case 2:
+                  gamePattern = [];
+                  userclicked_Pattern = [];
+
+                  $("h1").html("Game Over...");
+                  new Audio('sounds/wrong.mp3').play();
+                  $(".hidden").css("visibility","visible");
+                  Game_Reset();
+
+                  break;
+
+        default:
+    }
+  }
 });
+
 
 $(document).keypress(function(event) {
   let input_key = event.key;
-  gameLevel = 1;
-  if (input_key.toLowerCase() == "a" || restart == true) {
+
+  if (input_key.toLowerCase() == "a" && first_scan == true)
+  {
+    first_scan = false;
+
+    gameLevel = 1;
     $("h1").html("Level " + gameLevel);
-    restart = false;
-    let result;
+
     Next_Sequence();
-
-    pattern_correct = true;
-    $(".btn").click(function() {
-      userbutton = this.id;
-
-      if(userclicked_Pattern.push(buttonID) && userclicked_Pattern.length == gamePattern.length)
-      {
-        for (let i in userclicked_Pattern)
-        {
-          if (userclicked_Pattern[i] != gamePattern[i])
-          {
-            pattern_correct = false;
-            break;
-          }
-        }
-
-        if(pattern_correct)
-        {
-            gameLevel ++;
-            $("h1").html("Level " + gameLevel);
-            userclicked_Pattern = [];
-
-            setTimeout(function() {
-
-            Next_Sequence();
-
-          }, 500);
-
-        }
-        else
-        {
-            $("h1").html("Game Over...");
-            new Audio('sounds/wrong.mp3').play();
-            gamePattern = [];
-            userclicked_Pattern = [];
-            gameLevel = 1;
-            $(".hidden").css("visibility","visible");
-            restart = Game_reset();
-
-        }
-      }
-    });
-
   }
 
+  if(restart == true)
+  {
+    restart = false;
+
+    gameLevel = 1;
+    $("h1").html("Level " + gameLevel);
+
+    Next_Sequence();
+  }
 });
