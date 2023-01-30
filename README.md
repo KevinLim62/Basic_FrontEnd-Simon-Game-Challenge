@@ -1,5 +1,5 @@
 # Simon Game Challenge
-# Used languages: HTML, Javascript, CSS, Jquery
+# Used Languages/Frameworks: HTML, Javascript, CSS, Jquery
 
 Done
 -Create sequence pattern
