@@ -1,8 +1,9 @@
-# testing
+# Simon Game Challenge
+# Used languages: HTML, Javascript, CSS, Jquery
 
 Done
--Able to create sequence pattern
--Able to compare sequence pattern with user clicked pattern
--Function to increase game level
--Restarting game after game over
+-Create sequence pattern
+-Compare sequence pattern with user clicked pattern
+-Increment of game level
+-Restart game when game is over
 //
